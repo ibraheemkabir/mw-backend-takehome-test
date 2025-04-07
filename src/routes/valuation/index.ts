@@ -1,7 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { VehicleValuationRequest } from './types/vehicle-valuation-request';
-import { fetchValuationFromSuperCarValuation } from '@app/super-car/super-car-valuation';
 import { VehicleValuation } from '@app/models/vehicle-valuation';
+import { cacheValuation, checkCachedValuation } from '@app/utils/cache';
+import { VehicleValuationService } from '@app/services/vehicle-valuation';
+
+/**
+ * Initialise vehicle valuation service singleton to ensure single service instance.
+ */
+export const valuationSvc = new VehicleValuationService();
 
 export function valuationRoutes(fastify: FastifyInstance) {
   fastify.get<{
@@ -21,12 +27,10 @@ export function valuationRoutes(fastify: FastifyInstance) {
     const result = await valuationRepository.findOneBy({ vrm: vrm });
 
     if (result == null) {
-      return reply
-        .code(404)
-        .send({
-          message: `Valuation for VRM ${vrm} not found`,
-          statusCode: 404,
-        });
+      return reply.code(404).send({
+        message: `Valuation for VRM ${vrm} not found`,
+        statusCode: 404,
+      });
     }
 
     return result;
@@ -41,6 +45,12 @@ export function valuationRoutes(fastify: FastifyInstance) {
     const valuationRepository = fastify.orm.getRepository(VehicleValuation);
     const { vrm } = request.params;
     const { mileage } = request.body;
+    const valuationCacheKey = `${vrm}-${mileage}`;
+
+    const cachedValue = await checkCachedValuation(valuationCacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
 
     if (vrm.length > 7) {
       return reply
@@ -49,15 +59,20 @@ export function valuationRoutes(fastify: FastifyInstance) {
     }
 
     if (mileage === null || mileage <= 0) {
-      return reply
-        .code(400)
-        .send({
-          message: 'mileage must be a positive number',
-          statusCode: 400,
-        });
+      return reply.code(400).send({
+        message: 'mileage must be a positive number',
+        statusCode: 400,
+      });
     }
 
-    const valuation = await fetchValuationFromSuperCarValuation(vrm, mileage);
+    const valuation = await valuationSvc.getValuation({ vrm, mileage });
+
+    if (valuation === null) {
+      return reply.code(503).send({
+        message: 'Service Unavailable',
+        statusCode: 503,
+      });
+    }
 
     // Save to DB.
     await valuationRepository.insert(valuation).catch((err) => {
@@ -66,6 +81,7 @@ export function valuationRoutes(fastify: FastifyInstance) {
       }
     });
 
+    cacheValuation(valuationCacheKey, valuation);
     fastify.log.info('Valuation created: ', valuation);
 
     return valuation;
