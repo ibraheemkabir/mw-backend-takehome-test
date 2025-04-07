@@ -119,4 +119,29 @@ The URI for this test stub in Mocky is https://run.mocky.io/v3/0dfda26a-3a5a-43e
 
 
 # Candidate Notes
-Here is a place for you to put any notes regarding the changes you made and the reasoning and what further changes you wish to suggest.
+
+###  Implementation approaches
+
+Failover Problem : To solve the failover problem detailed in the task requirement , i considered two approached to solve it. I considered using : <br/>
+
+1. A circuit break approach (class based singleton)
+2. A configuration controller timeseries approach
+
+I settled on the first approach because of its simplicity and estensibility and i chose to combine this with a service based failover client which will allow for estensibility. This approach allows the circuit breaker based failover to be independent of the failover client provider. In turn this will allow us to be able to prospectively be able to switch between valuation providers with ease and it will allow us to add multiple failover clients in the future. 
+
+Given more time, an improvement to this approach will be to improve on the vehicle valuation service class a bit more by adding a round robin based alternator to allow for even more flexibility and to make the solution more robust to be applied for other uses e.g payment provider failover mechanism etc.
+
+PUT Operation Persistence Problem : To solve the PUT operation persistence problem, i introduced a basic caching mechanism to cache response based on a vrm and mileage defined key. This will help to solve the main problem which is to save costs and also ensures consistency across requests for specific vrm , mileage requests.
+
+Given more time, an improvement to this will be to introduce a redis service to imporve cache perfomance and persistence but i believe the current approach suffices for a single node cluster as defined in the problem.
+
+Provider Response Logging Problem : To solve this problem i implemented an http wrapper around the axios get function to keep track of request times and durations for logging purposes. The implementation in wrapped in a try, catch with the logging implemented in the finally block to ensure it is executed after completion of the http call.
+
+An improvement to this call will be to run logging as a background call and alternatively an axios interceptor can be implemented but this is likely to have some flexibiliy issues as the application grows.
+
+###  General Improvements (if given time)
+
+- To improve failover solution in the case of a multinode cluster, a prospective solution is to implement a centralised configuration as an alternative to singleton approach implemented here, to ensure persistence across nodes and additional flexibility.
+- Dockerisation of the application
+- Core package version update (With backward compatibiltiy in mind)
+
