@@ -1,4 +1,4 @@
-import { ValuationProviders } from "../../types/vehicle-valuation-request";
+import { ValuationProviders } from "@app/valuation-clients/types";
 
 export const mockReturnValuation = {
   vrm: 'ABC123',
