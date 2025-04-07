@@ -5,7 +5,7 @@ import { ExecutingFunction, IFallbackHandler } from '../utils/types';
  * function execution with application when threshold parameters are not
  * met.
  */
-export class FailOverHandler {
+export class FailOverService {
   private failurePercentageThreshold: number;
   private minimumFailureCount: number = 0;
   private state: string;

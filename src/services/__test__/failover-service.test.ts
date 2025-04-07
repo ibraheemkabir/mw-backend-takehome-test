@@ -1,4 +1,4 @@
-import { FailOverHandler } from '../failover-service';
+import { FailOverService } from '../failover-service';
 
 describe('Test fallback handler class', () => {
   afterAll(() => {
@@ -6,7 +6,7 @@ describe('Test fallback handler class', () => {
   });
 
   it('should nopt call secondary/fallback function when primary function is successful', () => {
-    const fallbackHandlerInstance = new FailOverHandler({
+    const fallbackHandlerInstance = new FailOverService({
       minimumFailurePercentage: 50,
       resetTimeout: 1000,
       minimumFailureCount: 3,
@@ -22,7 +22,7 @@ describe('Test fallback handler class', () => {
   });
 
   it('should call secondary/fallback function only when primary function call fails', () => {
-    const fallbackHandlerInstance = new FailOverHandler({
+    const fallbackHandlerInstance = new FailOverService({
       minimumFailurePercentage: 50,
       resetTimeout: 1000,
       minimumFailureCount: 3,
@@ -40,7 +40,7 @@ describe('Test fallback handler class', () => {
   });
 
   it('should call primary function until failure threshold count is surpassed', async () => {
-    const fallbackHandlerInstance = new FailOverHandler({
+    const fallbackHandlerInstance = new FailOverService({
       minimumFailurePercentage: 50,
       resetTimeout: 2000,
       minimumFailureCount: 2,
@@ -60,7 +60,7 @@ describe('Test fallback handler class', () => {
   });
 
   it('should retry primary function when reset timeout is surpassed', async () => {
-    const fallbackHandlerInstance = new FailOverHandler({
+    const fallbackHandlerInstance = new FailOverService({
       minimumFailurePercentage: 50,
       resetTimeout: 500,
       minimumFailureCount: 2,
@@ -83,7 +83,7 @@ describe('Test fallback handler class', () => {
   });
 
   it('should retry and execute passing primary function when reset timeout is surpassed', async () => {
-    const fallbackHandlerInstance = new FailOverHandler({
+    const fallbackHandlerInstance = new FailOverService({
       minimumFailurePercentage: 50,
       resetTimeout: 500,
       minimumFailureCount: 2,
@@ -110,7 +110,7 @@ describe('Test fallback handler class', () => {
   });
 
   it('should return null when primary and secondary fallback function fails', async () => {
-    const fallbackHandlerInstance = new FailOverHandler({
+    const fallbackHandlerInstance = new FailOverService({
       minimumFailurePercentage: 50,
       resetTimeout: 500,
       minimumFailureCount: 1,
