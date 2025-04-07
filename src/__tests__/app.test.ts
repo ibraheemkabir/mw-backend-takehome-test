@@ -4,6 +4,8 @@ describe('Test server health', () => {
   it('serve GET /', async () => {
     const res = await fastify.inject('/');
 
-    expect(res.json()).toStrictEqual({ hello: 'world' });
+    expect(res.json()).toStrictEqual({
+      message: 'Motorway vehicle valuations api',
+    });
   });
 });

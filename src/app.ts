@@ -22,7 +22,7 @@ export const app = (opts?: FastifyServerOptions) => {
     .ready();
 
   fastify.get('/', async () => {
-    return { hello: 'world' };
+    return { message: 'Motorway vehicle valuations api' };
   });
 
   valuationRoutes(fastify);
