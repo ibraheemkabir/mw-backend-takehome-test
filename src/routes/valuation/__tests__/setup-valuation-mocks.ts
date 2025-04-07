@@ -1,6 +1,6 @@
 import { ObjectLiteral, Repository } from 'typeorm';
 import { fastify } from '~root/test/fastify';
-import { mockReturnValuation } from '../fixtures/valuation';
+import { mockReturnValuation } from './fixtures/valuation';
 import { MockInstance } from 'vitest';
 
 /**
