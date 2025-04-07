@@ -2,9 +2,9 @@ import { fastify } from '~root/test/fastify';
 import { VehicleValuationRequest } from '../types/vehicle-valuation-request';
 import * as spv from '@app/super-car/super-car-valuation';
 import { mockReturnValuation } from './fixtures/valuation';
-import { setupRepositoryMocks } from './fixtures/setup-valuation-mocks';
+import { setupRepositoryMocks } from './setup-valuation-mocks';
 
-describe('ValuationController (e2e)', () => {
+describe('ValuationController (e2e) - PUT /valuations/', () => {
 
   beforeAll(() => {
     setupRepositoryMocks();
