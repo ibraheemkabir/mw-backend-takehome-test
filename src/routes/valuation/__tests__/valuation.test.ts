@@ -1,7 +1,24 @@
 import { fastify } from '~root/test/fastify';
 import { VehicleValuationRequest } from '../types/vehicle-valuation-request';
+import * as spv from '@app/super-car/super-car-valuation';
+import { mockReturnValuation } from './fixtures/valuation';
+import { setupRepositoryMocks } from './fixtures/setup-valuation-mocks';
 
 describe('ValuationController (e2e)', () => {
+
+  beforeAll(() => {
+    setupRepositoryMocks();
+
+    vitest
+    .spyOn(spv, 'fetchValuationFromSuperCarValuation')
+    .mockReturnValueOnce(Promise.resolve(mockReturnValuation));
+
+    vitest
+    .spyOn(spv, 'fetchValuationFromSuperCarValuation')
+    .mockReturnValueOnce(Promise.resolve(mockReturnValuation));
+    
+  });
+
   describe('PUT /valuations/', () => {
     it('should return 404 if VRM is missing', async () => {
       const requestBody: VehicleValuationRequest = {
